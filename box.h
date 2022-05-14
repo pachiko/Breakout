@@ -2,7 +2,7 @@
 
 #include <tuple>
 #include <algorithm>
-#include "Vec2.h"
+#include "Vec2F.h"
 
 enum DIRECTION {
 	UP, RIGHT, DOWN, LEFT

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <algorithm>
-#include "Vec2.h"
 #include "ball.h"
 
 class Platform {

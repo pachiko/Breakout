@@ -3,7 +3,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <math.h>
-#include "Vec2.h"
 #include "Vec2F.h"
 
 
@@ -34,7 +33,7 @@ class Ball {
 			return false;
 		}
 
-		void collide(const Box& otherB, bool varyVelX, bool alwaysUp) {
+		bool collide(const Box& otherB, bool varyVelX, bool alwaysUp) {
 			auto res{ b.intersect(otherB) };
 
 			if (std::get<0>(res)) {
@@ -68,5 +67,7 @@ class Ball {
 					}
 				}
 			}
+
+			return std::get<0>(res);
 		}
 };

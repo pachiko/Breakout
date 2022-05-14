@@ -4,6 +4,7 @@
 
 #include "wall.h"
 #include "platform.h"
+#include "Brick.h"
 #include "color.h"
 #include "ball.h"
 
@@ -13,6 +14,7 @@ static Wall* rightWall;
 static Wall* topWall;
 static Platform* platform;
 static Ball* ball;
+static Brick* testBrick;
 
 //
 //  You are free to modify this file
@@ -37,7 +39,8 @@ void initialize()
     rightWall = new Wall(SCREEN_WIDTH - wallThickness, wallThickness, true);
     topWall = new Wall(0, wallThickness, false);
 
-    platform = new Platform(60, 20);
+    testBrick = new Brick(200, 300, 200, 20);
+    platform = new Platform(100, 20);
     ball = new Ball(10);
     platform->attachBall(ball);
 }
@@ -54,6 +57,14 @@ void act(float dt)
     ball->collide(leftWall->b, false, false);
     ball->collide(rightWall->b, false, false);
     ball->collide(platform->b, true, true);
+    if (testBrick != NULL) {
+        bool hitBrick = ball->collide(testBrick->b, true, false);
+        if (hitBrick) {
+            delete testBrick;
+            testBrick = NULL;
+        }
+    }
+
     bool outOfBounds = ball->update(dt);
 
     if (outOfBounds) {
@@ -74,6 +85,10 @@ void draw()
     leftWall->draw();
     rightWall->draw();
     topWall->draw();
+    if (testBrick != NULL) {
+        testBrick->draw();
+    }
+
     platform->draw();
     ball->draw();
     
@@ -87,5 +102,6 @@ void finalize()
     delete topWall;
     delete platform;
     delete ball;
+    delete testBrick;
 }
 
