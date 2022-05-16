@@ -8,6 +8,11 @@ struct Vec2F {
 		x += v.x;
 		y += v.y;
 	}
+
+	void operator-=(const Vec2F& v) {
+		x -= v.x;
+		y -= v.y;
+	}
 };
 
 Vec2F operator+(const Vec2F& a, const Vec2F& b) {

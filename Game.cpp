@@ -1,24 +1,22 @@
 #include "Engine.h"
-#include <stdlib.h>
-#include <memory.h>
+#include <cstdlib>
+#include <memory>
 
 #include "wall.h"
 #include "platform.h"
 #include "Brick.h"
 #include "color.h"
 #include "ball.h"
+#include "BrickTiler.h"
+#include "QuadTree.h"
 
-//static std::unique_ptr<Wall> leftUWall; // what?
 static Wall* leftWall;
 static Wall* rightWall;
 static Wall* topWall;
 static Platform* platform;
 static Ball* ball;
-static Brick* testBrick;
-
-//
-//  You are free to modify this file
-//
+static std::vector<Brick> bricks;
+static QuadTree* tree;
 
 //  is_key_pressed(int button_vk_code) - check if a key is pressed,
 //                                       use keycodes (VK_SPACE, VK_RIGHT, VK_LEFT, VK_UP, VK_DOWN, 'A', 'B')
@@ -30,7 +28,6 @@ static Brick* testBrick;
 //  schedule_quit_game() - quit game after act()
 
 
-
 // initialize game data in this function
 void initialize()
 {
@@ -39,10 +36,12 @@ void initialize()
     rightWall = new Wall(SCREEN_WIDTH - wallThickness, wallThickness, true);
     topWall = new Wall(0, wallThickness, false);
 
-    testBrick = new Brick(200, 300, 200, 20);
     platform = new Platform(100, 20);
     ball = new Ball(10);
     platform->attachBall(ball);
+
+    bricks = BrickTiler::tileBricks(Box(30, 50, 1000, 300));
+    tree = new QuadTree(bricks);
 }
 
 // this function is called to update game data,
@@ -52,19 +51,22 @@ void act(float dt)
     if (is_mouse_button_pressed(0)) {
         platform->detachBall();
     }
-    platform->update(leftWall->b.p1.x, rightWall->b.p0.x, get_cursor_x());
-    ball->collide(topWall->b, false, false);
-    ball->collide(leftWall->b, false, false);
-    ball->collide(rightWall->b, false, false);
-    ball->collide(platform->b, true, true);
-    if (testBrick != NULL) {
-        bool hitBrick = ball->collide(testBrick->b, true, false);
-        if (hitBrick) {
-            delete testBrick;
-            testBrick = NULL;
-        }
-    }
 
+    platform->update(leftWall->b.p1.x, rightWall->b.p0.x, get_cursor_x());
+
+    if (platform->attachedBall == nullptr) {
+        ball->collide(topWall->b, false, false);
+        ball->collide(leftWall->b, false, false);
+        ball->collide(rightWall->b, false, false);
+        ball->collide(platform->b, true, true);
+
+        //for (auto it = bricks.begin(); it != bricks.end(); it++) {
+        //    if (ball->collide(it->b, true, false)) {
+        //        bricks.erase(it);
+        //        break;
+        //    }
+        //}
+    }
     bool outOfBounds = ball->update(dt);
 
     if (outOfBounds) {
@@ -85,13 +87,16 @@ void draw()
     leftWall->draw();
     rightWall->draw();
     topWall->draw();
-    if (testBrick != NULL) {
-        testBrick->draw();
-    }
 
     platform->draw();
     ball->draw();
-    
+
+    tree->draw();
+    tree->visualize();
+
+    //for (auto& brick : bricks) {
+    //    brick.draw();
+    //}
 }
 
 // free game data in this function
@@ -102,6 +107,6 @@ void finalize()
     delete topWall;
     delete platform;
     delete ball;
-    delete testBrick;
+    delete tree;
 }
 

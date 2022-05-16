@@ -13,7 +13,10 @@ class Box {
 		Vec2F p0; // bottom left
 		Vec2F p1; // top right
 
-		Box() = default;
+		Box() {
+			p0 = { FLT_MAX, FLT_MAX };
+			p1 = { -FLT_MAX, -FLT_MAX };
+		}
 
 		Box(const Vec2F& p0, const Vec2F& p1) {
 			this->p0 = p0;
@@ -69,6 +72,37 @@ class Box {
                     buffer[i][j] = col;
                 }
             }
+		}
+
+		void drawWire(uint32_t col) {
+			for (int j = p0.x; j <= p1.x; j++) {
+				buffer[static_cast<int>(p0.y)][j] = col;
+				buffer[static_cast<int>(p1.y)][j] = col;
+			}
+			for (int i = p0.y; i <= p1.y; i++) {
+				buffer[i][static_cast<int>(p0.x)] = col;
+				buffer[i][static_cast<int>(p1.x)] = col;
+			}
+		}
+
+		void grow(float r) {
+			p0 -= {r, r};
+			p1 += {r, r};
+		}
+
+		bool contains(const Vec2F& v) {
+			return v.x <= p1.x && v.x >= p0.x && v.y <= p1.y && v.y >= p0.y;
+		}
+
+		bool surrounds(const Box& other) {
+			return contains(other.p0) && contains(other.p1); 
+		}
+
+		void include(const Box& other) {
+			if (p0.x > other.p0.x) p0.x = other.p0.x;
+			if (p0.y > other.p0.y) p0.y = other.p0.y;
+			if (p1.x < other.p1.x) p1.x = other.p1.x;
+			if (p1.y < other.p1.y) p1.y = other.p1.y;
 		}
 
 		std::tuple<bool, DIRECTION, Vec2F> intersect(const Box& b) {
