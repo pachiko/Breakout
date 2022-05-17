@@ -11,18 +11,22 @@ class Ball {
 		Box b;
 		Vec2F vel;
 
+
 		Ball(uint32_t sz) {
 			b = Box(0, 0, sz, sz);
 			vel = Vec2F{};
 		}
 
+
 		void draw() {
 			b.draw(whiteCol);
 		}
 
+
 		void start() {
 			vel = { 0.f, -2.f };
 		}
+
 
 		bool update(float dt) {
 			dt = std::max(dt, 0.1f);
@@ -32,6 +36,7 @@ class Ball {
 			}
 			return false;
 		}
+
 
 		bool collide(const Box& otherB, bool varyVelX, bool alwaysUp) {
 			auto res{ b.intersect(otherB) };

@@ -15,13 +15,21 @@ public:
 		root->build(bricks);
 	}
 
+
 	~QuadTree() {
 		delete root;
 	}
 
+
+	bool collDet(Ball& ball) {
+		return root->collDet(ball);
+	}
+
+
 	void visualize() {
 		root->visualize();
 	}
+
 
 	void draw() {
 		root->draw();

@@ -90,11 +90,11 @@ class Box {
 			p1 += {r, r};
 		}
 
-		bool contains(const Vec2F& v) {
+		bool contains(const Vec2F& v) const {
 			return v.x <= p1.x && v.x >= p0.x && v.y <= p1.y && v.y >= p0.y;
 		}
 
-		bool surrounds(const Box& other) {
+		bool surrounds(const Box& other) const {
 			return contains(other.p0) && contains(other.p1); 
 		}
 
@@ -105,11 +105,14 @@ class Box {
 			if (p1.y < other.p1.y) p1.y = other.p1.y;
 		}
 
-		std::tuple<bool, DIRECTION, Vec2F> intersect(const Box& b) {
-			bool xInt = b.p0.x < p1.x && p0.x < b.p1.x;
-			bool yInt = b.p0.y < p1.y && p0.y < b.p1.y;
-			bool intersect = xInt && yInt;
+		bool intersects(const Box& b) {
+			bool xInt = b.p0.x < p1.x&& p0.x < b.p1.x;
+			bool yInt = b.p0.y < p1.y&& p0.y < b.p1.y;
+			return xInt && yInt;
+		}
 
+		std::tuple<bool, DIRECTION, Vec2F> intersect(const Box& b) {
+			bool intersect = intersects(b);
 			DIRECTION dir;
 			Vec2F diff{};
 

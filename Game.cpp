@@ -15,7 +15,6 @@ static Wall* rightWall;
 static Wall* topWall;
 static Platform* platform;
 static Ball* ball;
-static std::vector<Brick> bricks;
 static QuadTree* tree;
 
 //  is_key_pressed(int button_vk_code) - check if a key is pressed,
@@ -40,9 +39,10 @@ void initialize()
     ball = new Ball(10);
     platform->attachBall(ball);
 
-    bricks = BrickTiler::tileBricks(Box(30, 50, 1000, 300));
+    std::vector<Brick> bricks = BrickTiler::tileBricks(Box(30, 50, 1000, 300));
     tree = new QuadTree(bricks);
 }
+
 
 // this function is called to update game data,
 // dt - time elapsed since the previous update (in seconds)
@@ -60,12 +60,7 @@ void act(float dt)
         ball->collide(rightWall->b, false, false);
         ball->collide(platform->b, true, true);
 
-        //for (auto it = bricks.begin(); it != bricks.end(); it++) {
-        //    if (ball->collide(it->b, true, false)) {
-        //        bricks.erase(it);
-        //        break;
-        //    }
-        //}
+        tree->collDet(*ball);
     }
     bool outOfBounds = ball->update(dt);
 
@@ -76,6 +71,7 @@ void act(float dt)
     if (is_key_pressed(VK_ESCAPE))
         schedule_quit_game();
 }
+
 
 // fill buffer in this function
 // uint32_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH] - is an array of 32-bit colors (8 bits per R, G, B)
@@ -93,11 +89,8 @@ void draw()
 
     tree->draw();
     tree->visualize();
-
-    //for (auto& brick : bricks) {
-    //    brick.draw();
-    //}
 }
+
 
 // free game data in this function
 void finalize()
