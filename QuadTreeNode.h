@@ -6,16 +6,9 @@
 
 class QuadTreeNode {
 	Box b;
-	QuadTreeNode* children[4] = {}; // NE, NW, SW, SE
+	std::unique_ptr<QuadTreeNode> children[4]; // NE, NW, SW, SE
 	std::vector<Brick> bricks; // In-case some bricks overlap more than 1 child
 	friend class QuadTree;
-
-
-	~QuadTreeNode() {
-		for (int i = 0; i < 4; i++) {
-			delete children[i];
-		}
-	}
 
 
 	void build(std::vector<Brick>& bricks) {
@@ -48,8 +41,7 @@ class QuadTreeNode {
 				if (!childrenBricks[i].empty()) {
 					children[i]->build(childrenBricks[i]);
 				} else {
-					delete children[i];
-					children[i] = nullptr;
+					children[i].release();
 				}
 			}
 		}
@@ -76,7 +68,7 @@ class QuadTreeNode {
 
 	void initChildren() {
 		for (int i = 0; i < 4; i++) {
-			children[i] = new QuadTreeNode;
+			children[i] = std::make_unique<QuadTreeNode>();
 		}
 
 		float hw = b.w() / 2.f;
@@ -100,15 +92,14 @@ class QuadTreeNode {
 	}
 
 
-	bool collDet(Ball& ball) {
-		if (!b.intersects(ball.b)) return false;
+	bool collDet(const std::shared_ptr<Ball>& ball) {
+		if (!b.intersects(ball->b)) return false;
 
 		for (int i = 0; i < 4; i++) {
 			if (children[i]) {
 				if (children[i]->collDet(ball)) {
 					if (children[i]->bricks.empty() && children[i]->childless()) {
-						delete children[i];
-						children[i] = nullptr;
+						children[i].release();
 					}
 					return true;
 				}
@@ -116,7 +107,7 @@ class QuadTreeNode {
 		}
 
 		for (auto it = bricks.begin(); it != bricks.end(); it++) {
-			if (ball.collide(it->b, true, false)) {
+			if (ball->collide(it->b, true, false)) {
 				bricks.erase(it, it + 1);
 				return true;
 			}

@@ -10,12 +10,12 @@
 #include "BrickTiler.h"
 #include "QuadTree.h"
 
-static Wall* leftWall;
-static Wall* rightWall;
-static Wall* topWall;
-static Platform* platform;
-static Ball* ball;
-static QuadTree* tree;
+static std::unique_ptr<Wall> leftWall;
+static std::unique_ptr<Wall> rightWall;
+static std::unique_ptr<Wall> topWall;
+static std::unique_ptr<Platform> platform;
+static std::shared_ptr<Ball> ball;
+static std::unique_ptr<QuadTree> tree;
 
 //  is_key_pressed(int button_vk_code) - check if a key is pressed,
 //                                       use keycodes (VK_SPACE, VK_RIGHT, VK_LEFT, VK_UP, VK_DOWN, 'A', 'B')
@@ -31,16 +31,16 @@ static QuadTree* tree;
 void initialize()
 {
     const int wallThickness = 15;
-    leftWall = new Wall(0, wallThickness, true);
-    rightWall = new Wall(SCREEN_WIDTH - wallThickness, wallThickness, true);
-    topWall = new Wall(0, wallThickness, false);
+    leftWall = std::make_unique<Wall>(0, wallThickness, true);
+    rightWall = std::make_unique<Wall>(SCREEN_WIDTH - wallThickness, wallThickness, true);
+    topWall = std::make_unique<Wall>(0, wallThickness, false);
 
-    platform = new Platform(100, 20);
-    ball = new Ball(10);
+    platform = std::make_unique<Platform>(100, 20);
+    ball = std::make_shared<Ball>(10);
     platform->attachBall(ball);
 
     std::vector<Brick> bricks = BrickTiler::tileBricks(Box(30, 50, 1000, 300));
-    tree = new QuadTree(bricks);
+    tree = std::make_unique<QuadTree>(bricks);
 }
 
 
@@ -54,13 +54,13 @@ void act(float dt)
 
     platform->update(leftWall->b.p1.x, rightWall->b.p0.x, get_cursor_x());
 
-    if (platform->attachedBall == nullptr) {
+    if (!platform->attachedBall) {
         ball->collide(topWall->b, false, false);
         ball->collide(leftWall->b, false, false);
         ball->collide(rightWall->b, false, false);
         ball->collide(platform->b, true, true);
 
-        tree->collDet(*ball);
+        tree->collDet(ball);
     }
     bool outOfBounds = ball->update(dt);
 
@@ -95,11 +95,5 @@ void draw()
 // free game data in this function
 void finalize()
 {
-    delete leftWall;
-    delete rightWall;
-    delete topWall;
-    delete platform;
-    delete ball;
-    delete tree;
 }
 

@@ -3,11 +3,11 @@
 #include "QuadTreeNode.h"
 
 class QuadTree {
-	QuadTreeNode* root;
+	std::unique_ptr<QuadTreeNode> root;
 
 public:
 	QuadTree(std::vector<Brick>& bricks) {
-		root = new QuadTreeNode;
+		root = std::make_unique<QuadTreeNode>();
 		for (auto& brick : bricks) {
 			root->b.include(brick.b);
 		}
@@ -16,12 +16,7 @@ public:
 	}
 
 
-	~QuadTree() {
-		delete root;
-	}
-
-
-	bool collDet(Ball& ball) {
+	bool collDet(const std::shared_ptr<Ball>& ball) {
 		return root->collDet(ball);
 	}
 
