@@ -6,11 +6,7 @@ class Brick {
 public:
 	Box b;
 
-	Brick(uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
-		b = Box(x, y, w, h);
-	}
+	Brick(uint32_t x, uint32_t y, uint32_t w, uint32_t h);
 
-	void draw() {
-		b.draw(blueCol);
-	}
+	void draw();
 };

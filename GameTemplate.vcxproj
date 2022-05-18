@@ -157,8 +157,17 @@
     <ClInclude Include="wall.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ball.cpp" />
+    <ClCompile Include="box.cpp" />
+    <ClCompile Include="Brick.cpp" />
+    <ClCompile Include="BrickTiler.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="platform.cpp" />
+    <ClCompile Include="QuadTree.cpp" />
+    <ClCompile Include="QuadTreeNode.cpp" />
+    <ClCompile Include="Vec2F.cpp" />
+    <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
