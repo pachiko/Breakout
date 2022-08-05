@@ -1,10 +1,10 @@
 #include "QuadTreeNode.h"
 #include "color.h"
 
-void QuadTreeNode::build(std::vector<Brick>& bricks) {
+void QuadTreeNode::build(std::list<Brick>& bricks) {
 	if (bricks.size() > 1) {
 		initChildren();
-		std::vector<Brick> childrenBricks[4];
+		std::list<Brick> childrenBricks[4];
 
 		float hw = b.w() / 2.f;
 		float hh = b.h() / 2.f;
@@ -46,11 +46,11 @@ void QuadTreeNode::build(std::vector<Brick>& bricks) {
 }
 
 
-bool QuadTreeNode::passBricks(const Box& b1, std::vector<Brick>& v1, std::vector<Brick>& v2, std::vector<Brick>::iterator& it) {
+bool QuadTreeNode::passBricks(const Box& b1, std::list<Brick>& v1, std::list<Brick>& v2, std::list<Brick>::iterator& it) {
 	if (b1.surrounds(it->b)) {
-		v2.insert(v2.end(), std::make_move_iterator(it), std::make_move_iterator(it + 1));
-		v1.erase(it, it + 1);
-		it = v1.begin();
+		auto next = std::next(it, 1);
+		v2.splice(v2.end(), v1, it);
+		it = next;
 		return true;
 	}
 	return false;
@@ -99,7 +99,7 @@ bool QuadTreeNode::collDet(const std::shared_ptr<Ball>& ball) {
 
 	for (auto it = bricks.begin(); it != bricks.end(); it++) {
 		if (ball->collide(it->b, true, false)) {
-			bricks.erase(it, it + 1);
+			bricks.erase(it);
 			return true;
 		}
 	}

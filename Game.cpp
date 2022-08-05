@@ -39,7 +39,7 @@ void initialize()
     ball = std::make_shared<Ball>(10);
     platform->attachBall(ball);
 
-    std::vector<Brick> bricks = BrickTiler::tileBricks(Box(30, 50, 1000, 300));
+    std::list<Brick> bricks = BrickTiler::tileBricks(Box(30, 50, 1000, 300));
     tree = std::make_unique<QuadTree>(bricks);
 }
 

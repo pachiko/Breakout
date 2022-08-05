@@ -1,7 +1,7 @@
 #include "QuadTree.h"
 
 
-QuadTree::QuadTree(std::vector<Brick>& bricks) {
+QuadTree::QuadTree(std::list<Brick>& bricks) {
 	root = std::make_unique<QuadTreeNode>();
 	for (auto& brick : bricks) {
 		root->b.include(brick.b);

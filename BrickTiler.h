@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <list>
 #include "Brick.h"
 
 
@@ -11,5 +11,5 @@ static constexpr uint32_t offset{ 40 };
 
 class BrickTiler {
 public:
-	static std::vector<Brick> tileBricks(const Box& b);
+	static std::list<Brick> tileBricks(const Box& b);
 };
